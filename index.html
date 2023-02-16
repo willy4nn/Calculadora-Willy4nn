@@ -4,11 +4,17 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/style.css">
   <title>Calculadora</title>
 </head>
 <body>
   <div class="calculator">
-    <input class="result" type="text" disabled>
+    <div class="decoration">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <input class="result" type="text" value="200" disabled>
     <div class="buttons">
       <div class="buttons-row">
         <button class="operation">C</button>
@@ -37,7 +43,7 @@
       <div class="buttons-row">
         <button>0</button>
         <button>.</button>
-        <button class="operation">=</button>
+        <button class="equal">=</button>
       </div>
     </div>
   </div>
