@@ -75,6 +75,7 @@ body {
 .buttons-row button {
   width: 60px;
   height: 60px;
+  border: none;
   border-radius: 10px;
   background: transparent;
   display: flex;
