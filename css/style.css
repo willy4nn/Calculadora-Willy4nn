@@ -87,12 +87,11 @@ body {
   cursor: pointer;
 }
 
-.buttons-row button:hover {
-  background: #0D0D0D;
-}
-
 .buttons-row button:active {
   background: #222222;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .buttons-row button.operation {
@@ -113,4 +112,10 @@ body {
   content: '';
   width: 60px;
   height: 60px;
+}
+
+@media (hover: hover) {
+  .buttons-row button:hover {
+    background: #0D0D0D;
+  }
 }
