@@ -49,11 +49,26 @@ body {
   background: #33C759;
 }
 
+.signal {
+  font-family: 'Roboto Mono', monospace;
+  text-align: right;
+  height: 20px;
+  color: #FFFFFF;
+}
+
+.resultado-anterior {
+  font-family: 'Roboto Mono', monospace;
+  text-align: right;
+  margin-bottom: 40px;
+  height: 20px;
+  color: #FFFFFF;
+}
+
 .result {
   width: 100%;
   border: none;
   background: transparent;
-  margin: 90px 0px 40px;
+  margin: 70px 0px 0px;
   font-family: 'Roboto Mono', monospace;
   font-weight: bold;
   font-size: 64px;
@@ -94,7 +109,7 @@ body {
   -webkit-user-select: none;
 }
 
-.buttons-row button.operation {
+.buttons-row button.operation, .buttons-row button.clear, .buttons-row button.mudar {
   color: #959595;
 }
 
@@ -105,7 +120,7 @@ body {
 }
 
 .buttons-row button.equal:active {
-  background: #dd7600;
+  background: #DD7600;
 }
 
 .buttons-row:last-child::after {
