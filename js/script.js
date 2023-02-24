@@ -1,113 +1,104 @@
-const valorInput = document.querySelector('.result');
-const valorPrev = document.querySelector('.resultado-anterior');
-
-const btnNumber = document.querySelectorAll('.number');
-btnNumber.forEach((btn) => btn.addEventListener('click', addValue));
-
-const btnOperation = document.querySelectorAll('.operation');
-btnOperation.forEach((btn) => btn.addEventListener('click', addOperation));
-
-const equal = document.querySelector('.equal');
-equal.addEventListener('click', addResult);
-
-const clear = document.querySelector('.clear');
-clear.addEventListener('click', limpar);
-
-let refazer = false;
-let operacao = '';
-
+const valorTela = document.querySelector('.result');
+const valorTelaAnterior = document.querySelector('.resultado-anterior');
+const sinalTela = document.querySelector('.signal');
+const valorOperacao = document.querySelectorAll('[data-operation]');
+const valorNumero = document.querySelectorAll('.number');
+const botaoIgual = document.querySelector('.equal');
+const botaoLimpar = document.querySelector('[data-limpar]');
 const calculo = {};
+let trocouSinal = false;
 
-function addValue(event) {
-  if (event.target.className == 'number' && !refazer) {
-    valorInput.value += event.target.innerText;
-  } else if (event.target.className == 'number' && refazer) {
-    valorInput.value = '';
-    valorInput.value += event.target.innerText;
-    refazer = false;
+valorOperacao.forEach((operacao) => operacao.addEventListener('click', adicionarOperacao));
+valorNumero.forEach((botao) => botao.addEventListener('click', adicionarValor));
+botaoLimpar.addEventListener('click', limparTela);
+
+//* Digita o valor na tela.
+function adicionarValor(event) {
+  const valor = event.target.innerText;
+
+  //? Caso não exista primeiro valor:
+  if (!calculo.primeiroValor){
+    valorTela.value += valor;
   }
-  else {
-    valorPrev.innerText += event.target.innerText;
-    calculo.segundoValor = parseInt(valorPrev.innerText);
+  //? Caso exista primeiro valor e não exista o segundo:
+  else if ((calculo.primeiroValor && !calculo.segundoValor)) {
+    valorTelaAnterior.innerText += valor;
+  }
+  else if ((calculo.primeiroValor && calculo.segundoValor) && (trocouSinal == true)) {
+    valorTelaAnterior.innerText = valor;
+    trocouSinal = false;
+  }
+
+  //? Caso exista primeiro valor e exista o segundo:
+  else if (calculo.primeiroValor && calculo.segundoValor) {
+    valorTelaAnterior.innerText += valor;
   }
 };
 
-function addOperation(event) {
-  valorInput.value = parseInt(valorInput.value) || 0
-  calculo.primeiroValor = parseInt(valorInput.value);
-  btnNumber.forEach((btn) => {
-    btn.classList.remove('number');
-    btn.classList.add('number-second');
-  });
+//* Adiciona a operação na tela.
+//* Soma o valor atual ao valor anterior.
+let operacaoAnterior;
+function adicionarOperacao(event) {
+  //? Muda o sinal da operação.
+  const operacao = event.target.innerText
+  sinalTela.innerText = operacao;
 
-  operacao = event.target.innerText;
+  //? Atualiza os valores da operação.
+  calculo.primeiroValor = parseInt(valorTela.value);
+  calculo.segundoValor = parseInt(valorTelaAnterior.innerText);
+  calculo.operacao = operacao;
 
-  if(calculo.segundoValor !== undefined) {
-    switch (operacao) {
-      case '%':
-        valorPrev.innerText = calculo.segundoValor + '%';
+  //? Se o sinal for diferente do anterior, limpará o segundo valor.
+  if (operacaoAnterior !== operacao) {
+    operacaoAnterior = operacao;
+    valorTelaAnterior.innerText = '';
+  } else if (operacaoAnterior == operacao) {
+    trocouSinal = true;
+    calcular(calculo);
+  } else {
+    calcular(calculo);
+  }
+  operacaoAnterior = operacao;
+};
+
+//* Realiza o cálculo e mostra na tela.
+function calcular(calculo) {
+
+  let resultado;
+
+  if (calculo.primeiroValor && calculo.segundoValor && calculo.operacao) {
+    switch (calculo.operacao) {
+      case '+':
+        resultado = calculo.primeiroValor + calculo.segundoValor;
         break
-      case '±':
-        valorPrev.innerText = -(valorPrev.innerText);
+      case '-':
+        resultado = calculo.primeiroValor - calculo.segundoValor;
+        break
+      case '÷':
+        resultado = calculo.primeiroValor / calculo.segundoValor;
+        break
+      case '×':
+        resultado = calculo.primeiroValor * calculo.segundoValor;
         break
     }
+
+    valorTela.value = resultado;
+    return resultado;  
   }
-} 
-
-function addResult() {
-  calculo.primeiroValor = parseInt(valorInput.value);
-  let resultado
-
-  switch (operacao) {
-    case '+':
-      resultado = calculo.primeiroValor + calculo.segundoValor;
-      break;
-    case '-':
-      resultado = calculo.primeiroValor - calculo.segundoValor;
-      break;
-    case '÷':
-      resultado = calculo.primeiroValor / calculo.segundoValor;
-      break;
-    case '×':
-      resultado = calculo.primeiroValor * calculo.segundoValor;
-      break;
-  }
-
-  if (typeof resultado === 'number' && isFinite(resultado) && !isNaN(resultado)) {
-    valorInput.value = resultado;
-    valorPrev.innerText = '';
-  } else if (resultado == undefined) {
-    resultado = calculo.primeiroValor;
-  } else {
-    valorInput.value = resultado;
-    setTimeout(() => {
-      valorInput.value = '';
-      valorPrev.innerText = '';
-    }, 1000);
-    btnNumber.forEach((btn) => {
-      btn.classList.remove('number-second');
-      btn.classList.add('number');
-    });
-  }
-
-  if (isNaN(calculo.segundoValor)) {
-    valorInput.value = calculo.primeiroValor;
-    refazer = true;
-  }
-
-  console.log(` 
-  Primeiro Valor: ${calculo.primeiroValor};
-  Segundo Valor: ${calculo.segundoValor};
-  Resultado: ${resultado};
-  Operação: ${operacao};
-  `);
 }
 
-function limpar() {
-  valorInput.value = '';
-  valorPrev.innerText = '';
-  btnNumber.forEach((btn) => {
-    btn.classList.remove('number-second');
-    btn.classList.add('number');
-  });
-}
+//* Limpa o valor na tela.
+function limparTela() {
+  valorTela.value = '';
+  calculo.primeiroValor = '';
+  valorTelaAnterior.innerText = '';
+  calculo.segundoValor = '';
+};
+
+//* Botão igual.
+botaoIgual.addEventListener('click', () => {
+  calculo.primeiroValor = parseInt(valorTela.value);
+  calculo.segundoValor = parseInt(valorTelaAnterior.innerText);
+  trocouSinal = true;
+  calcular(calculo);
+});
