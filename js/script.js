@@ -16,21 +16,21 @@ botaoLimpar.addEventListener('click', limparTela);
 function adicionarValor(event) {
   const valor = event.target.innerText;
 
-  //? Caso não exista primeiro valor:
-  if (!calculo.primeiroValor){
-    valorTela.value += valor;
-  }
   //? Caso exista primeiro valor e não exista o segundo:
-  else if ((calculo.primeiroValor && !calculo.segundoValor)) {
+  if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (!calculo.segundoValor)) {
     valorTelaAnterior.innerText += valor;
   }
-  else if ((calculo.primeiroValor && calculo.segundoValor) && (trocouSinal == true)) {
+  //? Caso não exista primeiro valor: 
+  else if (!calculo.primeiroValor){
+    valorTela.value += valor;
+  }
+  //? Caso exista o primeiro e exista o segundo valor:
+  else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (calculo.segundoValor || calculo.segundoValor === 0) && (trocouSinal == true)) {
     valorTelaAnterior.innerText = valor;
     trocouSinal = false;
   }
-
   //? Caso exista primeiro valor e exista o segundo:
-  else if (calculo.primeiroValor && calculo.segundoValor) {
+  else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && calculo.segundoValor) {
     valorTelaAnterior.innerText += valor;
   }
 };
@@ -66,7 +66,7 @@ function calcular(calculo) {
 
   let resultado;
 
-  if (calculo.primeiroValor && calculo.segundoValor && calculo.operacao) {
+  if ((calculo.primeiroValor || calculo.primeiroValor == 0) && (calculo.segundoValor || calculo.primeiroValor == 0) && calculo.operacao) {
     switch (calculo.operacao) {
       case '+':
         resultado = calculo.primeiroValor + calculo.segundoValor;
@@ -82,6 +82,14 @@ function calcular(calculo) {
         break
     }
 
+    if (isNaN(resultado)) {
+      valorTela.value = 'Erro';
+      setTimeout(() => {
+        limparTela();
+      }, 1000);
+      return;
+    }
+
     valorTela.value = resultado;
     return resultado;  
   }
@@ -89,10 +97,12 @@ function calcular(calculo) {
 
 //* Limpa o valor na tela.
 function limparTela() {
-  valorTela.value = '';
-  calculo.primeiroValor = '';
   valorTelaAnterior.innerText = '';
   calculo.segundoValor = '';
+  valorTela.value = '';
+  calculo.primeiroValor = '';
+  sinalTela.innerText = '';
+  calculo.operacao = '';
 };
 
 //* Botão igual.
