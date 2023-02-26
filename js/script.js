@@ -44,8 +44,8 @@ function adicionarOperacao(event) {
   sinalTela.innerText = operacao;
 
   //? Atualiza os valores da operação.
-  calculo.primeiroValor = parseInt(valorTela.value);
-  calculo.segundoValor = parseInt(valorTelaAnterior.innerText);
+  calculo.primeiroValor = parseFloat(valorTela.value);
+  calculo.segundoValor = parseFloat(valorTelaAnterior.innerText);
   calculo.operacao = operacao;
 
   //? Se o sinal for diferente do anterior, limpará o segundo valor.
@@ -82,7 +82,10 @@ function calcular(calculo) {
         break
     }
 
-    if (isNaN(resultado)) {
+    if (!isNaN(resultado)) {
+      valorTela.value = resultado;
+      return resultado;  
+    } else if (isNaN(resultado)) {
       valorTela.value = 'Erro';
       setTimeout(() => {
         limparTela();
@@ -90,8 +93,6 @@ function calcular(calculo) {
       return;
     }
 
-    valorTela.value = resultado;
-    return resultado;  
   }
 }
 
@@ -103,12 +104,23 @@ function limparTela() {
   calculo.primeiroValor = '';
   sinalTela.innerText = '';
   calculo.operacao = '';
+  operacaoAnterior = '';
 };
 
 //* Botão igual.
 botaoIgual.addEventListener('click', () => {
-  calculo.primeiroValor = parseInt(valorTela.value);
-  calculo.segundoValor = parseInt(valorTelaAnterior.innerText);
+  calculo.primeiroValor = parseFloat(valorTela.value);
+  calculo.segundoValor = parseFloat(valorTelaAnterior.innerText);
   trocouSinal = true;
   calcular(calculo);
 });
+
+function teste() {
+  console.log(valorTelaAnterior.innerText);
+  console.log(calculo.segundoValor);
+  console.log(valorTela.value);
+  console.log(calculo.primeiroValor);
+  console.log(sinalTela.innerText);
+  console.log(calculo.operacao);
+  console.log(operacaoAnterior);
+}
