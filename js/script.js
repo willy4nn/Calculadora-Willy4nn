@@ -7,7 +7,6 @@ const botaoIgual = document.querySelector('.equal');
 const botaoLimpar = document.querySelector('[data-limpar]');
 const calculo = {};
 let trocouSinal = false;
-
 valorOperacao.forEach((operacao) => operacao.addEventListener('click', adicionarOperacao));
 valorNumero.forEach((botao) => botao.addEventListener('click', adicionarValor));
 botaoLimpar.addEventListener('click', limparTela);
@@ -18,11 +17,23 @@ function adicionarValor(event) {
 
   //? Caso exista primeiro valor e não exista o segundo:
   if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (!calculo.segundoValor)) {
-    valorTelaAnterior.innerText += valor;
+    if (valor == '.' && !valorTelaAnterior.innerText.includes('.')) {
+      valorTelaAnterior.innerText += valor;
+    } else if(valor == '%' && !valorTelaAnterior.innerText.includes('%')) {
+      valorTelaAnterior.innerText += valor;
+    } else if (!isNaN(valor)) {
+      valorTelaAnterior.innerText += valor;
+    }
   }
   //? Caso não exista primeiro valor: 
   else if (!calculo.primeiroValor){
-    valorTela.value += valor;
+    if (valor == '.' && !valorTela.value.includes('.')) {
+      valorTela.value += valor;
+    } else if(valor == '%' && !valorTela.value.includes('%')) {
+      valorTela.value += valor;
+    } else if (!isNaN(valor)) {
+      valorTela.value += valor;
+    }
   }
   //? Caso exista o primeiro e exista o segundo valor:
   else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (calculo.segundoValor || calculo.segundoValor === 0) && (trocouSinal == true)) {
@@ -31,7 +42,13 @@ function adicionarValor(event) {
   }
   //? Caso exista primeiro valor e exista o segundo:
   else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && calculo.segundoValor) {
-    valorTelaAnterior.innerText += valor;
+    if (valor == '.' && !valorTela.value.includes('.')) {
+      valorTelaAnterior.innerText += valor;
+    } else if(valor == '%' && !valorTelaAnterior.innerText.includes('%')) {
+      valorTelaAnterior.innerText += valor;
+    }else if (!isNaN(valor)) {
+      valorTelaAnterior.innerText += valor;
+    }
   }
 };
 
@@ -44,8 +61,16 @@ function adicionarOperacao(event) {
   sinalTela.innerText = operacao;
 
   //? Atualiza os valores da operação.
-  calculo.primeiroValor = parseFloat(valorTela.value);
-  calculo.segundoValor = parseFloat(valorTelaAnterior.innerText);
+
+  if (valorTelaAnterior.innerText.includes('%')) {
+    calculo.primeiroValor = valorTela.value;
+    calculo.segundoValor = valorTelaAnterior.innerText;
+  }
+  else {
+    calculo.primeiroValor = parseFloat(valorTela.value);
+    calculo.segundoValor = parseFloat(valorTelaAnterior.innerText);
+  }
+  
   calculo.operacao = operacao;
 
   //? Se o sinal for diferente do anterior, limpará o segundo valor.
@@ -66,19 +91,28 @@ function calcular(calculo) {
 
   let resultado;
 
-  if ((calculo.primeiroValor || calculo.primeiroValor == 0) && (calculo.segundoValor || calculo.primeiroValor == 0) && calculo.operacao) {
+  if ((calculo.primeiroValor || calculo.primeiroValor == 0) && (calculo.segundoValor || calculo.primeiroValor == 0) && calculo.operacao && (typeof calculo.primeiroValor === 'string' || typeof calculo.segundoValor === 'string')) {
+  if (calculo.primeiroValor.includes('%')) {
+      calculo.primeiroValor = (parseFloat(calculo.primeiroValor.replace('%', '')) / 100) * 100;
+  }
+  if (calculo.segundoValor.includes('%')) {
+      calculo.segundoValor = (parseFloat(calculo.segundoValor.replace('%', '')) / 100) * calculo.primeiroValor;
+  }
+  }
+  
+  if ((calculo.primeiroValor || calculo.primeiroValor == 0) && (calculo.segundoValor || calculo.primeiroValor == 0) && calculo.operacao && (!isNaN(calculo.primeiroValor) && !isNaN(calculo.segundoValor))) {
     switch (calculo.operacao) {
       case '+':
-        resultado = calculo.primeiroValor + calculo.segundoValor;
+        resultado = parseFloat(calculo.primeiroValor) + parseFloat(calculo.segundoValor);
         break
       case '-':
-        resultado = calculo.primeiroValor - calculo.segundoValor;
+        resultado = parseFloat(calculo.primeiroValor) - parseFloat(calculo.segundoValor);
         break
       case '÷':
-        resultado = calculo.primeiroValor / calculo.segundoValor;
+        resultado = parseFloat(calculo.primeiroValor) / parseFloat(calculo.segundoValor);
         break
       case '×':
-        resultado = calculo.primeiroValor * calculo.segundoValor;
+        resultado = parseFloat(calculo.primeiroValor) * parseFloat(calculo.segundoValor);
         break
     }
 
@@ -115,13 +149,3 @@ botaoIgual.addEventListener('click', () => {
   trocouSinal = true;
   calcular(calculo);
 });
-
-function teste() {
-  console.log(valorTelaAnterior.innerText);
-  console.log(calculo.segundoValor);
-  console.log(valorTela.value);
-  console.log(calculo.primeiroValor);
-  console.log(sinalTela.innerText);
-  console.log(calculo.operacao);
-  console.log(operacaoAnterior);
-};
