@@ -38,7 +38,11 @@ function adicionarValor(event) {
   }
   //? Caso exista primeiro valor e exista o segundo:
   else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && calculo.segundoValor) {
-    valorTelaAnterior.innerText += valor;
+    if (isNaN(valor) && !valorTelaAnterior.innerText.includes('.')) {
+      valorTelaAnterior.innerText += valor;
+    } else if (!isNaN(valor)) {
+      valorTelaAnterior.innerText += valor;
+    }
   }
 };
 
