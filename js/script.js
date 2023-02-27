@@ -82,6 +82,7 @@ function calcular(calculo) {
         break
     }
 
+    //? Se for um número adicione o resultado, se não mostre o erro e limpe a tela:
     if (!isNaN(resultado)) {
       valorTela.value = resultado;
       return resultado;  
@@ -123,4 +124,4 @@ function teste() {
   console.log(sinalTela.innerText);
   console.log(calculo.operacao);
   console.log(operacaoAnterior);
-}
+};
