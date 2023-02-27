@@ -7,7 +7,6 @@ const botaoIgual = document.querySelector('.equal');
 const botaoLimpar = document.querySelector('[data-limpar]');
 const calculo = {};
 let trocouSinal = false;
-
 valorOperacao.forEach((operacao) => operacao.addEventListener('click', adicionarOperacao));
 valorNumero.forEach((botao) => botao.addEventListener('click', adicionarValor));
 botaoLimpar.addEventListener('click', limparTela);
@@ -18,11 +17,19 @@ function adicionarValor(event) {
 
   //? Caso exista primeiro valor e não exista o segundo:
   if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (!calculo.segundoValor)) {
-    valorTelaAnterior.innerText += valor;
+    if (isNaN(valor) && !valorTelaAnterior.innerText.includes('.')) {
+      valorTelaAnterior.innerText += valor;
+    } else if (!isNaN(valor)) {
+      valorTelaAnterior.innerText += valor;
+    }
   }
   //? Caso não exista primeiro valor: 
   else if (!calculo.primeiroValor){
-    valorTela.value += valor;
+    if (isNaN(valor) && !valorTela.value.includes('.')) {
+      valorTela.value += valor;
+    } else if (!isNaN(valor)) {
+      valorTela.value += valor;
+    }
   }
   //? Caso exista o primeiro e exista o segundo valor:
   else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (calculo.segundoValor || calculo.segundoValor === 0) && (trocouSinal == true)) {
