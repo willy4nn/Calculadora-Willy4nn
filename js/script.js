@@ -3,6 +3,7 @@ const valorTelaAnterior = document.querySelector('.resultado-anterior');
 const sinalTela = document.querySelector('.signal');
 const valorOperacao = document.querySelectorAll('[data-operation]');
 const valorNumero = document.querySelectorAll('.number');
+const botaoInverter = document.querySelector('[data-inverter]');
 const botaoIgual = document.querySelector('.equal');
 const botaoLimpar = document.querySelector('[data-limpar]');
 const calculo = {};
@@ -17,28 +18,43 @@ function adicionarValor(event) {
 
   //? Caso exista primeiro valor e não exista o segundo:
   if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (!calculo.segundoValor)) {
-    if (valor == '.' && !valorTelaAnterior.innerText.includes('.')) {
+    if (valor == '.' && !valorTelaAnterior.innerText.includes('.') && valorTelaAnterior.innerText.charAt(valorTelaAnterior.innerText.length - 1) !== '%') {
       valorTelaAnterior.innerText += valor;
-    } else if(valor == '%' && !valorTelaAnterior.innerText.includes('%')) {
+    } else if(valor == '%' && !valorTelaAnterior.innerText.includes('%') && valorTelaAnterior.innerText.charAt(valorTelaAnterior.innerText.length - 1) !== '%' && valorTelaAnterior.innerText.charAt(valorTelaAnterior.innerText.length - 1) !== '.' && !isNaN(parseInt(valorTelaAnterior.innerText.charAt(valorTelaAnterior.innerText.length - 1)))) {
       valorTelaAnterior.innerText += valor;
-    } else if (!isNaN(valor)) {
+    } else if (valor == '±' && !valorTelaAnterior.innerText.includes('-') && !valorTelaAnterior.innerText.includes('+')) {
+      valorTelaAnterior.innerText = '-' + valorTelaAnterior.innerText;
+    } else if (valor == '±' && valorTelaAnterior.innerText.includes('-')) {
+      valorTelaAnterior.innerText = valorTelaAnterior.innerText.replace('-', '+');
+    }  else if (valor == '±' && valorTelaAnterior.innerText.includes('+')) {
+      valorTelaAnterior.innerText = valorTelaAnterior.innerText.replace('+', '-');
+    } else if (!isNaN(valor) && valorTelaAnterior.innerText.charAt(valorTelaAnterior.innerText.length - 1) !== '%') {
       valorTelaAnterior.innerText += valor;
     }
   }
   //? Caso não exista primeiro valor: 
   else if (!calculo.primeiroValor){
-    if (valor == '.' && !valorTela.value.includes('.')) {
+    if (valor == '.' && !valorTela.value.includes('.') && valorTela.value.charAt(valorTela.value.length - 1) !== '%') {
       valorTela.value += valor;
-    } else if(valor == '%' && !valorTela.value.includes('%')) {
+    } else if(valor == '%' && !valorTela.value.includes('%') && valorTela.value.charAt(valorTela.value.length - 1) !== '%' && valorTela.value.charAt(valorTela.value.length - 1) !== '.' && !isNaN(parseInt(valorTela.value.charAt(valorTela.value.length - 1)))) {
       valorTela.value += valor;
-    } else if (!isNaN(valor)) {
+    } else if (valor == '±' && !valorTela.value.includes('-') && !valorTela.value.includes('+')) {
+      valorTela.value = '-' + valorTela.value;
+    } else if (valor == '±' && valorTela.value.includes('-')) {
+      valorTela.value = valorTela.value.replace('-', '+');
+    } else if (valor == '±' && valorTela.value.includes('+')) {
+      valorTela.value = valorTela.value.replace('+', '-');
+    } else if (!isNaN(valor) && valorTela.value.charAt(valorTela.value.length - 1) !== '%') {
       valorTela.value += valor;
     }
   }
   //? Caso exista o primeiro e exista o segundo valor:
-  else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (calculo.segundoValor || calculo.segundoValor === 0) && (trocouSinal == true)) {
-    valorTelaAnterior.innerText = valor;
-    trocouSinal = false;
+  else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && (calculo.segundoValor || calculo.segundoValor === 0) && (trocouSinal == true)
+  ) {
+    if (!isNaN(parseInt(valor))) {
+      valorTelaAnterior.innerText = valor;
+      trocouSinal = false;
+    }
   }
   //? Caso exista primeiro valor e exista o segundo:
   else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && calculo.segundoValor) {
@@ -46,7 +62,7 @@ function adicionarValor(event) {
       valorTelaAnterior.innerText += valor;
     } else if(valor == '%' && !valorTelaAnterior.innerText.includes('%')) {
       valorTelaAnterior.innerText += valor;
-    }else if (!isNaN(valor)) {
+    } else if (!isNaN(valor)) {
       valorTelaAnterior.innerText += valor;
     }
   }
@@ -62,7 +78,7 @@ function adicionarOperacao(event) {
 
   //? Atualiza os valores da operação.
 
-  if (valorTelaAnterior.innerText.includes('%')) {
+  if (valorTela.value.includes('%') || valorTelaAnterior.innerText.includes('%')) {
     calculo.primeiroValor = valorTela.value;
     calculo.segundoValor = valorTelaAnterior.innerText;
   }
@@ -88,12 +104,11 @@ function adicionarOperacao(event) {
 
 //* Realiza o cálculo e mostra na tela.
 function calcular(calculo) {
-
   let resultado;
 
   if ((calculo.primeiroValor || calculo.primeiroValor == 0) && (calculo.segundoValor || calculo.primeiroValor == 0) && calculo.operacao && (typeof calculo.primeiroValor === 'string' || typeof calculo.segundoValor === 'string')) {
   if (calculo.primeiroValor.includes('%')) {
-      calculo.primeiroValor = (parseFloat(calculo.primeiroValor.replace('%', '')) / 100) * 100;
+      calculo.primeiroValor = parseFloat(calculo.primeiroValor.replace('%', '')) / 100;
   }
   if (calculo.segundoValor.includes('%')) {
       calculo.segundoValor = (parseFloat(calculo.segundoValor.replace('%', '')) / 100) * calculo.primeiroValor;
@@ -118,7 +133,7 @@ function calcular(calculo) {
 
     //? Se for um número adicione o resultado, se não mostre o erro e limpe a tela:
     if (!isNaN(resultado)) {
-      valorTela.value = resultado;
+      valorTela.value = parseFloat(resultado.toFixed(4));
       return resultado;  
     } else if (isNaN(resultado)) {
       valorTela.value = 'Erro';
@@ -144,8 +159,14 @@ function limparTela() {
 
 //* Botão igual.
 botaoIgual.addEventListener('click', () => {
-  calculo.primeiroValor = parseFloat(valorTela.value);
-  calculo.segundoValor = parseFloat(valorTelaAnterior.innerText);
+  if (valorTela.value.includes('%') || valorTelaAnterior.innerText.includes('%')) {
+    calculo.primeiroValor = valorTela.value;
+    calculo.segundoValor = valorTelaAnterior.innerText;
+  }
+  else {
+    calculo.primeiroValor = parseFloat(valorTela.value);
+    calculo.segundoValor = parseFloat(valorTelaAnterior.innerText);
+  }
   trocouSinal = true;
   calcular(calculo);
 });
