@@ -31,6 +31,7 @@ function adicionarValor(event) {
     } else if (!isNaN(valor) && valorTelaAnterior.innerText.charAt(valorTelaAnterior.innerText.length - 1) !== '%') {
       valorTelaAnterior.innerText += valor;
     }
+    console.log('Funciona');
   }
   //? Caso não exista primeiro valor: 
   else if (!calculo.primeiroValor){
@@ -60,10 +61,19 @@ function adicionarValor(event) {
   else if ((calculo.primeiroValor || calculo.primeiroValor === 0) && calculo.segundoValor) {
     if (valor == '.' && !valorTela.value.includes('.')) {
       valorTelaAnterior.innerText += valor;
+      console.log('ponto');
     } else if(valor == '%' && !valorTelaAnterior.innerText.includes('%')) {
       valorTelaAnterior.innerText += valor;
+      console.log('porcentagem');
+    } else if (valor == '±' && !valorTelaAnterior.innerText.includes('-') && !valorTelaAnterior.innerText.includes('+')) {
+      valorTelaAnterior.innerText = '-' + valorTelaAnterior.innerText;
+    } else if (valor == '±' && valorTelaAnterior.innerText.includes('-')) {
+      valorTelaAnterior.innerText = valorTelaAnterior.innerText.replace('-', '+');
+    }  else if (valor == '±' && valorTelaAnterior.innerText.includes('+')) {
+      valorTelaAnterior.innerText = valorTelaAnterior.innerText.replace('+', '-');
     } else if (!isNaN(valor)) {
       valorTelaAnterior.innerText += valor;
+      console.log('valor');
     }
   }
 };
